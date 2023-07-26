@@ -1,6 +1,10 @@
+## O que é o Ceph?
+
 O Ceph é uma solução de armazenamento distribuído e descentralizado que utiliza um conjunto de servidores interconectados para criar um sistema de armazenamento altamente disponível e tolerante a falhas. Dito isso, vamos ver a instalação passo a passo de um cluster Ceph!
 
 ## Instale os pré-requisitos
+
+A princípio, os pacotes necessários para a instalação do ceph serão somente dois. Entretanto, com o decorrer da instalação, vamos ter que instalar mais pacotes.
 
 ```bash
 apt install -y curl gnupg
@@ -627,3 +631,13 @@ sudo ceph dashboard iscsi-gateway-add -i gw1
 sudo ceph dashboard iscsi-gateway-add -i gw2
 sudo ceph dashboard iscsi-gateway-add -i gw3
 ```
+
+---
+
+# Licença
+
+> **Desenvolvido pela equipe Tiex**
+
+> **Autores:** Eduardo Vasconcelos
+
+> **Data de criação:** 20/06/2023
