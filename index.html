@@ -1,0 +1,1228 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
+    
+    
+      
+        <title>Instalação Manual do Ceph - Tutorial</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.eebd395e.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.ecc896b0.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+      
+        <meta  property="og:type"  content="website" >
+      
+        <meta  property="og:title"  content="Home" >
+      
+        <meta  property="og:description"  content="None" >
+      
+        <meta  property="og:image"  content="./assets/images/social/index.png" >
+      
+        <meta  property="og:image:type"  content="image/png" >
+      
+        <meta  property="og:image:width"  content="1200" >
+      
+        <meta  property="og:image:height"  content="630" >
+      
+        <meta  property="og:url"  content="None" >
+      
+        <meta  name="twitter:card"  content="summary_large_image" >
+      
+        <meta  name="twitter:title"  content="Home" >
+      
+        <meta  name="twitter:description"  content="None" >
+      
+        <meta  name="twitter:image"  content="./assets/images/social/index.png" >
+      
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="purple">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#o-que-e-o-ceph" class="md-skip">
+          Ir para o conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href="." title="Instalação Manual do Ceph - Tutorial" class="md-header__button md-logo" aria-label="Instalação Manual do Ceph - Tutorial" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Instalação Manual do Ceph - Tutorial
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Home
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+            
+              <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+              </label>
+            
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="lime"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+            
+              <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"/></svg>
+              </label>
+            
+          
+        </form>
+      
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Abas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+    
+  
+
+
+  <li class="md-tabs__item">
+    <a href="." class="md-tabs__link md-tabs__link--active">
+      Home
+    </a>
+  </li>
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="Instalação Manual do Ceph - Tutorial" class="md-nav__button md-logo" aria-label="Instalação Manual do Ceph - Tutorial" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Instalação Manual do Ceph - Tutorial
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Home
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        Home
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#o-que-e-o-ceph" class="md-nav__link">
+    O que é o Ceph?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#instale-os-pre-requisitos" class="md-nav__link">
+    Instale os pré-requisitos
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configurando-o-cluster-ceph-e-seus-nodes" class="md-nav__link">
+    Configurando o cluster Ceph e seus nodes
+  </a>
+  
+    <nav class="md-nav" aria-label="Configurando o cluster Ceph e seus nodes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-gerando-e-configurando-uma-chave-ssh-nos-controllers-nodes" class="md-nav__link">
+    1. Gerando e configurando uma chave ssh nos Controllers nodes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-instale-o-ceph-em-cada-node" class="md-nav__link">
+    2. Instale o ceph em cada node
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-configure-o-monitor-daemon-e-o-maganer-daemon-nos-controllers-nodes" class="md-nav__link">
+    3. Configure o Monitor Daemon e o Maganer Daemon nos controllers nodes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-criando-e-importando-as-chaves-para-admin-monitor-e-bootstrap" class="md-nav__link">
+    4. Criando e importando as chaves para admin, monitor e bootstrap
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-crie-um-monitor-map-para-os-monitores-se-comunicarem-e-iniciando-o-monitor" class="md-nav__link">
+    5. Crie um “monitor map” para os monitores se comunicarem e iniciando o monitor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-criando-um-manager-e-habilitando-o-dashboard-do-ceph" class="md-nav__link">
+    6. Criando um “manager” e habilitando o dashboard do ceph
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-verificando-o-cluster-via-dashboard" class="md-nav__link">
+    7. Verificando o cluster via dashboard
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adicionando-mais-nodes-controllers-ao-seu-cluster" class="md-nav__link">
+    Adicionando mais nodes “controllers” ao seu cluster
+  </a>
+  
+    <nav class="md-nav" aria-label="Adicionando mais nodes “controllers” ao seu cluster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-transferindo-os-arquivos-necessarios-para-os-outros-nodes" class="md-nav__link">
+    1. Transferindo os arquivos necessários para os outros nodes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-no-seu-controller2-assim-como-no-controller1-habilite-o-monitor-e-aplique-esses-seguintes-passos" class="md-nav__link">
+    2. No seu “controller2”, assim como no “controller1”, habilite o monitor e aplique esses seguintes passos:
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#criando-osds-para-o-cluster" class="md-nav__link">
+    Criando OSDs para o cluster
+  </a>
+  
+    <nav class="md-nav" aria-label="Criando OSDs para o cluster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-crie-uma-vm-para-servir-como-seu-osd-e-instale-o-ceph" class="md-nav__link">
+    1. Crie uma VM para servir como seu OSD e instale o ceph
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-crie-um-disco-especifico-para-o-osd-com-o-kvm" class="md-nav__link">
+    2. Crie um disco específico para o OSD com o KVM
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-no-seu-controller-copie-os-arquivos-de-configuracao-e-mande-para-o-node-de-osd" class="md-nav__link">
+    3. No seu controller, copie os arquivos de configuração e mande para o node de OSD
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-no-node-de-osd-prepare-o-disco-e-inicie-o-osd" class="md-nav__link">
+    4. No node de OSD, prepare o disco e inicie o OSD
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usando-um-block-device-no-cluster" class="md-nav__link">
+    Usando um Block Device no cluster
+  </a>
+  
+    <nav class="md-nav" aria-label="Usando um Block Device no cluster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-criando-um-node-ceph-client" class="md-nav__link">
+    1. Criando um node "Ceph-Client"
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-enviando-os-arquivos-de-um-node-pra-outro" class="md-nav__link">
+    2. Enviando os arquivos de um node pra outro
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-criando-uma-pool" class="md-nav__link">
+    3. Criando uma pool
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-crie-um-block-device" class="md-nav__link">
+    4. Crie um block device
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usando-um-file-system-no-cluster" class="md-nav__link">
+    Usando um File System no cluster
+  </a>
+  
+    <nav class="md-nav" aria-label="Usando um File System no cluster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-no-node-client-instale-o-ceph-fuse" class="md-nav__link">
+    1. No node “client”, instale o “ceph-fuse”
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-configure-o-mds-metadata-server-em-um-node-controller" class="md-nav__link">
+    2. Configure o MDS (MetaData Server) em um node controller
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-crie-2-rados-pools-para-data-e-metadata-no-node-com-mds" class="md-nav__link">
+    3. Crie 2 RADOS pools para Data e MetaData no node com MDS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-monte-uma-particao-cephfs-no-node-client" class="md-nav__link">
+    4. Monte uma partição CephFS no node Client
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configurando-o-ceph-object-gateway" class="md-nav__link">
+    Configurando o Ceph Object Gateway
+  </a>
+  
+    <nav class="md-nav" aria-label="Configurando o Ceph Object Gateway">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-em-um-node-especifico-para-object-gateway-instale-o-radosgw" class="md-nav__link">
+    1. Em um node especifico para Object Gateway, instale o radosgw
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-no-node-controller1-configure-o-cephconf" class="md-nav__link">
+    2. No node “controller1”, configure o ceph.conf
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-transfira-os-arquivos-de-configuracao" class="md-nav__link">
+    3. Transfira os arquivos de configuração
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-configure-o-radosgw" class="md-nav__link">
+    4. Configure o RADOSGW
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-reinicie-os-nodes-controller1-e-o-node-de-radosgw" class="md-nav__link">
+    5. Reinicie os nodes “controller1” e o node de radosgw
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-verifique-o-status-do-radosgw" class="md-nav__link">
+    6. Verifique o status do RADOSGW
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-no-node-de-object-gateway-crie-um-usuario" class="md-nav__link">
+    7. No node de object gateway, crie um usuário
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-use-o-script-de-teste-em-python-para-verificar-o-acesso-a-interface-s3" class="md-nav__link">
+    8. Use o script de teste em Python para verificar o acesso à interface S3
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#instale-o-nfs-ganesha" class="md-nav__link">
+    Instale o NFS-Ganesha
+  </a>
+  
+    <nav class="md-nav" aria-label="Instale o NFS-Ganesha">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-instale-e-configure-o-nfs-ganesha-no-node-com-cephfs" class="md-nav__link">
+    1. Instale e configure o NFS-Ganesha no node com CephFS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-verifique-a-montagem-do-nfs-no-node-client-do-ceph" class="md-nav__link">
+    2. Verifique a montagem do NFS no node “Client” do ceph.
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configurando-iscsi-no-ceph" class="md-nav__link">
+    Configurando ISCSI no ceph
+  </a>
+  
+    <nav class="md-nav" aria-label="Configurando ISCSI no ceph">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-crie-uma-pool-para-o-iscsi" class="md-nav__link">
+    1. Crie uma pool para o iscsi
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-altere-o-arquivo-de-configuracao-do-ceph" class="md-nav__link">
+    2. Altere o arquivo de configuração do ceph
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-instale-os-seguintes-pacotes-em-todos-os-nodes-que-terao-o-iscsi" class="md-nav__link">
+    3. Instale os seguintes pacotes em todos os nodes que terão o ISCSI
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-configure-o-arquivo-de-configuracao-do-iscsi" class="md-nav__link">
+    4. Configure o arquivo de configuração do ISCSI
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-reinicie-os-servicos-do-debian-e-habilite-o-servico-do-gateway-para-iscsi" class="md-nav__link">
+    5. Reinicie os serviços do debian e habilite o serviço do gateway para iscsi
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-adicionando-os-gateways-ao-cluster" class="md-nav__link">
+    6. Adicionando os gateways ao cluster
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#licenca" class="md-nav__link">
+    Licença
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h2 id="o-que-e-o-ceph">O que é o Ceph?</h2>
+<p>O Ceph é uma solução de armazenamento distribuído e descentralizado que utiliza um conjunto de servidores interconectados para criar um sistema de armazenamento altamente disponível e tolerante a falhas. Dito isso, vamos ver a instalação passo a passo de um cluster Ceph!</p>
+<h2 id="instale-os-pre-requisitos">Instale os pré-requisitos</h2>
+<p>A princípio, os pacotes necessários para a instalação do ceph serão somente dois. Entretanto, com o decorrer da instalação, vamos ter que instalar mais pacotes.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>curl<span class="w"> </span>gnupg
+</code></pre></div>
+<hr />
+<h1 id="configurando-o-cluster-ceph-e-seus-nodes">Configurando o cluster Ceph e seus nodes</h1>
+<h2 id="1-gerando-e-configurando-uma-chave-ssh-nos-controllers-nodes">1. Gerando e configurando uma chave ssh nos Controllers nodes</h2>
+<p>As chaves SSH são necessárias para a conexão sem senha dos nodes entre si. Para gerar uma chave SSH e um arquivo de configuração, execute esses comandos no seu terminal</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ssh-keygen
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>nano<span class="w"> </span>~/.ssh/config
+</code></pre></div>
+<p>Dentro do arquivo de configuração criado, vamos determinar os hosts e hostnames dos nossos nodes</p>
+<blockquote>
+<p><strong>Nota:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="w">  </span><span class="c1"># Defina cada node e SSH user</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Host<span class="w"> </span>controller1
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span>Hostname<span class="w"> </span>controller1
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span>User<span class="w"> </span>root
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>Host<span class="w"> </span>controller2
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span>Hostname<span class="w"> </span>controller2
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span>User<span class="w"> </span>root
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>Host<span class="w"> </span>controller3
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">  </span>Hostname<span class="w"> </span>controller3
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">  </span>User<span class="w"> </span>root
+</code></pre></div>
+</blockquote>
+<p>No seu terminal, faça a cópia da chave ssh do seu host aos outros nodes</p>
+<blockquote>
+<p><strong>Nota:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Adicione a chave ssh do controller1 aos outros nodes e vice-versa</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>ssh-copy-id<span class="w"> </span>controller1
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>ssh-copy-id<span class="w"> </span>controller2
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>ssh-copy-id<span class="w"> </span>controller3
+</code></pre></div>
+</blockquote>
+<h2 id="2-instale-o-ceph-em-cada-node">2. Instale o ceph em cada node</h2>
+<p>Para instalar o ceph em cada node de maneira mais rápida, podemos utilizar a linguagem bash no terminal</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">for</span><span class="w"> </span>NODE<span class="w"> </span><span class="k">in</span><span class="w"> </span>controller1<span class="w"> </span>controller2<span class="w"> </span>controller3
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">do</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span>ssh<span class="w"> </span><span class="nv">$NODE</span><span class="w"> </span><span class="s2">&quot;apt update; apt -y install ceph ceph-common&quot;</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="k">done</span>
+</code></pre></div>
+<h2 id="3-configure-o-monitor-daemon-e-o-maganer-daemon-nos-controllers-nodes">3. Configure o Monitor Daemon e o Maganer Daemon nos controllers nodes</h2>
+<p>Os monitores são responsáveis por manter e distribuir informações sobre o estado do cluster, já os managers são responsáveis por coletar, armazenar e forncecer informações sobre métricas e estatísticas do cluster.</p>
+<p>Para configurar os monitores e managers, temos que criar um id específico e um arquivo de configuração para o cluster.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># comando para gerar um id para seu cluster</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>uuidgen
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># crie um arquivo de configuração para o ceph</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>nano<span class="w"> </span>/etc/ceph/ceph.conf
+</code></pre></div>
+<p>Veja como deve ficar seu "ceph.conf"</p>
+<blockquote>
+<p><strong>Exemplo:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="o">[</span>global<span class="o">]</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nv">fsid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">{</span>cluster<span class="w"> </span>uuid<span class="o">}</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>mon<span class="w"> </span>initial<span class="w"> </span><span class="nv">members</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">{</span>id1<span class="o">}</span>,<span class="w"> </span><span class="o">{</span>id2<span class="o">}</span>,<span class="w"> </span><span class="o">{</span>id2<span class="o">}</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>mon<span class="w"> </span><span class="nv">host</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">{</span>ip1<span class="o">}</span>,<span class="w"> </span><span class="o">{</span>ip2<span class="o">}</span>,<span class="w"> </span><span class="o">{</span>ip3<span class="o">}</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>public<span class="w"> </span><span class="nv">network</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">{</span>network<span class="w"> </span>range<span class="w"> </span><span class="k">for</span><span class="w"> </span>your<span class="w"> </span>&gt;public<span class="w"> </span>network<span class="o">}</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>cluster<span class="w"> </span><span class="nv">network</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">{</span>network<span class="w"> </span>range<span class="w"> </span><span class="k">for</span><span class="w"> </span>your<span class="w"> </span>&gt;cluster<span class="w"> </span>network<span class="o">}</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>auth<span class="w"> </span>cluster<span class="w"> </span><span class="nv">required</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>cephx
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>auth<span class="w"> </span>service<span class="w"> </span><span class="nv">required</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>cephx
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>auth<span class="w"> </span>client<span class="w"> </span><span class="nv">required</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>cephx
+</code></pre></div>
+</blockquote>
+<h2 id="4-criando-e-importando-as-chaves-para-admin-monitor-e-bootstrap">4. Criando e importando as chaves para admin, monitor e bootstrap</h2>
+<p>Deve-se criar as "keyrings" para autenticação e permissão dos monitores, admin client e "bootstrap-osd". O comando "ceph-authtool" serve para manipular as "keyrings" de autenticação do ceph.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sudo<span class="w"> </span>ceph-authtool<span class="w"> </span>--create-keyring<span class="w"> </span>/etc/ceph/ceph.mon.keyring<span class="w"> </span>--gen-key<span class="w"> </span>-n<span class="w"> </span>mon.<span class="w"> </span>--cap<span class="w"> </span>mon<span class="w"> </span><span class="s1">&#39;allow *&#39;</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>sudo<span class="w"> </span>ceph-authtool<span class="w"> </span>--create-keyring<span class="w"> </span>/etc/ceph/ceph.client.admin.keyring<span class="w"> </span>--gen-key<span class="w"> </span>-n<span class="w"> </span>client.admin<span class="w"> </span>--cap<span class="w"> </span>mon<span class="w"> </span><span class="s1">&#39;allow *&#39;</span><span class="w"> </span>--cap<span class="w"> </span>osd<span class="w"> </span><span class="s1">&#39;allow *&#39;</span><span class="w"> </span>--cap<span class="w"> </span>mds<span class="w"> </span><span class="s1">&#39;allow *&#39;</span><span class="w"> </span>--cap<span class="w"> </span>mgr<span class="w"> </span><span class="s1">&#39;allow *&#39;</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>sudo<span class="w"> </span>ceph-authtool<span class="w"> </span>--create-keyring<span class="w"> </span>/var/lib/ceph/bootstrap-osd/ceph.keyring<span class="w"> </span>--gen-key<span class="w"> </span>-n<span class="w"> </span>client.bootstrap-osd<span class="w"> </span>--cap<span class="w"> </span>mon<span class="w"> </span><span class="s1">&#39;profile bootstrap-osd&#39;</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>sudo<span class="w"> </span>ceph-authtool<span class="w"> </span>/etc/ceph/ceph.mon.keyring<span class="w"> </span>--import-keyring<span class="w"> </span>/etc/ceph/ceph.client.admin.keyring
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>sudo<span class="w"> </span>ceph-authtool<span class="w"> </span>/etc/ceph/ceph.mon.keyring<span class="w"> </span>--import-keyring<span class="w"> </span>/var/lib/ceph/bootstrap-osd/ceph.keyring
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>sudo<span class="w"> </span>chown<span class="w"> </span>ceph:ceph<span class="w"> </span>/etc/ceph/ceph.mon.keyring<span class="w"> </span><span class="c1"># Torna o usuário do ceph como o dono do arquivo &quot;ceph.mon.keyring&quot;</span>
+</code></pre></div>
+<h2 id="5-crie-um-monitor-map-para-os-monitores-se-comunicarem-e-iniciando-o-monitor">5. Crie um “monitor map” para os monitores se comunicarem e iniciando o monitor</h2>
+<p>É preciso ter um "mapa" para que os monitores possam se "enxergar", então iremos usar o comando "monmaptool" para criar esse "monitor map" e adicionar os monitores a esse mapa.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Criando o mapa e adicionando os monitores</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>monmaptool<span class="w"> </span>--create<span class="w"> </span>--add<span class="w"> </span><span class="o">{</span>node1-id<span class="o">}</span><span class="w"> </span><span class="o">{</span>node1-ip<span class="o">}</span><span class="w"> </span>--fsid<span class="w"> </span><span class="o">{</span>cluster<span class="w"> </span>uuid<span class="o">}</span><span class="w"> </span>/etc/ceph/monmap
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>monmaptool<span class="w"> </span>--add<span class="w"> </span><span class="o">{</span>node2-id<span class="o">}</span><span class="w"> </span><span class="o">{</span>node2-ip<span class="o">}</span><span class="w"> </span>--fsid<span class="w"> </span><span class="o">{</span>cluster<span class="w"> </span>uuid<span class="o">}</span><span class="w"> </span>/etc/ceph/monmap
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>monmaptool<span class="w"> </span>--add<span class="w"> </span><span class="o">{</span>node3-id<span class="o">}</span><span class="w"> </span><span class="o">{</span>node3-ip<span class="o">}</span><span class="w"> </span>--fsid<span class="w"> </span><span class="o">{</span>cluster<span class="w"> </span>uuid<span class="o">}</span><span class="w"> </span>/etc/ceph/monmap
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="c1"># Criando um diretório para armazenar os dados do monitor e incializando o monitor</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>sudo<span class="w"> </span>-u<span class="w"> </span>ceph<span class="w"> </span>mkdir<span class="w"> </span>/var/lib/ceph/mon/ceph-<span class="o">{</span>node1-id<span class="o">}</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>sudo<span class="w"> </span>-u<span class="w"> </span>ceph<span class="w"> </span>ceph-mon<span class="w"> </span>--mkfs<span class="w"> </span>-i<span class="w"> </span><span class="o">{</span>node1-id<span class="o">}</span><span class="w"> </span>--monmap<span class="w"> </span>/etc/ceph/monmap<span class="w"> </span>--keyring<span class="w"> </span>/etc/ceph/ceph.mon.keyring
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>ceph-mon@<span class="o">{</span>node1-id<span class="o">}</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>ceph-mon@<span class="o">{</span>node1-id<span class="o">}</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="c1"># Ativando protocolos de comunicação e segurança para o cluster</span>
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>sudo<span class="w"> </span>ceph<span class="w"> </span>mon<span class="w"> </span>enable-msgr2
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>ceph<span class="w"> </span>config<span class="w"> </span><span class="nb">set</span><span class="w"> </span>mon<span class="w"> </span>auth_allow_insecure_global_id_reclaim<span class="w"> </span><span class="nb">false</span>
+</code></pre></div>
+<h2 id="6-criando-um-manager-e-habilitando-o-dashboard-do-ceph">6. Criando um “manager” e habilitando o dashboard do ceph</h2>
+<p>Temos que criar credenciais de autenticação para o manager e garantir todas as permissões necessárias para ele</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Criando as credenciais e garantindo as permissões</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>sudo<span class="w"> </span>ceph<span class="w"> </span>auth<span class="w"> </span>get-or-create<span class="w"> </span>mgr.<span class="o">{</span>node1-id<span class="o">}</span><span class="w"> </span>mon<span class="w"> </span><span class="s1">&#39;allow profile mgr&#39;</span><span class="w"> </span>osd<span class="w"> </span><span class="s1">&#39;allow *&#39;</span><span class="w"> </span>mds<span class="w"> </span><span class="s1">&#39;allow *&#39;</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>sudo<span class="w"> </span>-u<span class="w"> </span>ceph<span class="w"> </span>mkdir<span class="w"> </span>/var/lib/ceph/mgr/ceph-<span class="o">{</span>node1-id<span class="o">}</span><span class="w"> </span><span class="c1"># Copie a keyring que for &#39;printada&#39; no seu terminal</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>sudo<span class="w"> </span>-u<span class="w"> </span>ceph<span class="w"> </span>nano<span class="w"> </span>/var/lib/ceph/mgr/ceph-<span class="o">{</span>node1-id<span class="o">}</span>/keyring<span class="w"> </span><span class="c1"># Cole a keyring que você copiou nesse arquivo</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="c1"># Inicializando o manager</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>ceph-mgr@<span class="o">{</span>node1-id<span class="o">}</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>ceph-mgr@<span class="o">{</span>node1-id<span class="o">}</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="c1"># Instalando e habilitando o dashboard do ceph</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>apt<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span>ceph-mgr-dashboard
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>sudo<span class="w"> </span>ceph<span class="w"> </span>mgr<span class="w"> </span>module<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>dashboard
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>sudo<span class="w"> </span>ceph<span class="w"> </span>dashboard<span class="w"> </span>create-self-signed-cert
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>sudo<span class="w"> </span>nano<span class="w"> </span>passwd<span class="w"> </span><span class="c1">#coloque uma senha dentro desse arquivo</span>
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>sudo<span class="w"> </span>ceph<span class="w"> </span>dashboard<span class="w"> </span>ac-user-create<span class="w"> </span>admin<span class="w"> </span>-i<span class="w"> </span>passwd<span class="w"> </span>administrator
+</code></pre></div>
+<h2 id="7-verificando-o-cluster-via-dashboard">7. Verificando o cluster via dashboard</h2>
+<p>No seu navegador, acesse o dashboard via ip do controller que você habilitou o dashboard</p>
+<blockquote>
+<p><strong>Nota:</strong>
+https://SEUIP:8443/
+Usuário: admin
+Senha: "senha-que-você-adicionou-no-arquivo-passwd"</p>
+</blockquote>
+<hr />
+<h1 id="adicionando-mais-nodes-controllers-ao-seu-cluster">Adicionando mais nodes “controllers” ao seu cluster</h1>
+<h2 id="1-transferindo-os-arquivos-necessarios-para-os-outros-nodes">1. Transferindo os arquivos necessários para os outros nodes</h2>
+<p>Para adicionar mais nodes com monitor e manager, não precisamos fazer todo esse procedimento novamente para cada node. Basta enviarmos os arquivos de configuração, keyrings e o "monmap" para algum outro node.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>sudo<span class="w"> </span>scp<span class="w"> </span>/etc/ceph/ceph.conf<span class="w"> </span><span class="o">{</span>user<span class="o">}</span>@<span class="o">{</span>server<span class="o">}</span>:/etc/ceph/
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>sudo<span class="w"> </span>scp<span class="w"> </span>/etc/ceph/ceph.client.admin.keyring<span class="w"> </span><span class="o">{</span>user<span class="o">}</span>@<span class="o">{</span>server<span class="o">}</span>:/etc/ceph/
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>sudo<span class="w"> </span>scp<span class="w"> </span>/var/lib/ceph/bootstrap-osd/ceph.keyring<span class="w"> </span><span class="o">{</span>user<span class="o">}</span>@<span class="o">{</span>server<span class="o">}</span>:/var/lib/ceph/bootstrap-osd/
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>sudo<span class="w"> </span>scp<span class="w"> </span>/etc/ceph/monmap<span class="w"> </span><span class="o">{</span>user<span class="o">}</span>@<span class="o">{</span>server<span class="o">}</span>:/etc/ceph/
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>sudo<span class="w"> </span>scp<span class="w"> </span>/etc/ceph/ceph.mon.keyring<span class="w"> </span><span class="o">{</span>user<span class="o">}</span>@<span class="o">{</span>server<span class="o">}</span>:/etc/ceph/ceph.mon.keyring
+</code></pre></div>
+<h2 id="2-no-seu-controller2-assim-como-no-controller1-habilite-o-monitor-e-aplique-esses-seguintes-passos">2. No seu “controller2”, assim como no “controller1”, habilite o monitor e aplique esses seguintes passos:</h2>
+<p>É necessário fazer alguns ajustes nos arquivos que nós acabamos de transferir para que o monitor seja reconhecido no cluster</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Mudando o dono da keyring do monitor, criando um diretório para armazenar os dados e inicializando os dados do monitor</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>sudo<span class="w"> </span>chown<span class="w"> </span>ceph:ceph<span class="w"> </span>/etc/ceph/ceph.mon.keyring
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>sudo<span class="w"> </span>-u<span class="w"> </span>ceph<span class="w"> </span>mkdir<span class="w"> </span>/var/lib/ceph/mon/ceph-<span class="o">{</span>node2-id<span class="o">}</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>sudo<span class="w"> </span>-u<span class="w"> </span>ceph<span class="w"> </span>ceph-mon<span class="w"> </span>--mkfs<span class="w"> </span>-i<span class="w"> </span><span class="o">{</span>node2-id<span class="o">}</span><span class="w"> </span>--monmap<span class="w"> </span>/etc/ceph/monmap<span class="w"> </span>--keyring<span class="w"> </span>/etc/ceph/ceph.mon.keyring
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="c1"># Inicializando os serviços do monitor</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>ceph-mon@<span class="o">{</span>node2-id<span class="o">}</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>ceph-mon@<span class="o">{</span>node2-id<span class="o">}</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="c1"># Habilitando o protocolo de comunicação no monitor</span>
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>sudo<span class="w"> </span>ceph<span class="w"> </span>mon<span class="w"> </span>enable-msgr2
+</code></pre></div>
+<hr />
+<h1 id="criando-osds-para-o-cluster">Criando OSDs para o cluster</h1>
+<h2 id="1-crie-uma-vm-para-servir-como-seu-osd-e-instale-o-ceph">1. Crie uma VM para servir como seu OSD e instale o ceph</h2>
+<p>É recomendado que você crie outra máquina virtual para "hostear" o seu OSD, já que é mais seguro e expande o seu cluster</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>apt<span class="w"> </span>update
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>apt<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span>ceph<span class="w"> </span>ceph-common
+</code></pre></div>
+<h2 id="2-crie-um-disco-especifico-para-o-osd-com-o-kvm">2. Crie um disco específico para o OSD com o KVM</h2>
+<p>Para criar um OSD, é recomendado um disco com no mínimo 1 terabyte, porém, você pode criar um OSD com o tamanho que você quiser</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Crie o disco com esse comando</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>sudo<span class="w"> </span>qemu-img<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>qcow2<span class="w"> </span>/var/lib/libvirt/images/novodisco.qcow2<span class="w"> </span>30G
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="c1"># Adicione o disco a sua VM (Você pode fazer essa adição manualmente pelo KVM)</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>sudo<span class="w"> </span>virsh<span class="w"> </span>attach-disk<span class="w"> </span>minhaVM<span class="w"> </span>--source<span class="w"> </span>/var/lib/libvirt/images/novodisco.qcow2<span class="w"> </span>--target<span class="w"> </span>vdb<span class="w"> </span>--persistent
+</code></pre></div>
+<h2 id="3-no-seu-controller-copie-os-arquivos-de-configuracao-e-mande-para-o-node-de-osd">3. No seu controller, copie os arquivos de configuração e mande para o node de OSD</h2>
+<p>Para adicionar o OSD ao cluster, precisamos enviar o arquivo de configuração, keyrings, bootstrap e o monmap para a VM do OSD.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>sudo<span class="w"> </span>scp<span class="w"> </span>/etc/ceph/ceph.conf<span class="w"> </span><span class="o">{</span>user<span class="o">}</span>@<span class="o">{</span>server<span class="o">}</span>:/etc/ceph/
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>sudo<span class="w"> </span>scp<span class="w"> </span>/etc/ceph/ceph.client.admin.keyring<span class="w"> </span><span class="o">{</span>user<span class="o">}</span>@<span class="o">{</span>server<span class="o">}</span>:/etc/ceph/
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>sudo<span class="w"> </span>scp<span class="w"> </span>/var/lib/ceph/bootstrap-osd/ceph.keyring<span class="w"> </span><span class="o">{</span>user<span class="o">}</span>@<span class="o">{</span>server<span class="o">}</span>:/var/lib/ceph/bootstrap-osd/
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>sudo<span class="w"> </span>scp<span class="w"> </span>/etc/ceph/monmap<span class="w"> </span><span class="o">{</span>user<span class="o">}</span>@<span class="o">{</span>server<span class="o">}</span>:/etc/ceph/
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>sudo<span class="w"> </span>scp<span class="w"> </span>/etc/ceph/ceph.mon.keyring<span class="w"> </span><span class="o">{</span>user<span class="o">}</span>@<span class="o">{</span>server<span class="o">}</span>:/etc/ceph/ceph.mon.keyring
+</code></pre></div>
+<h2 id="4-no-node-de-osd-prepare-o-disco-e-inicie-o-osd">4. No node de OSD, prepare o disco e inicie o OSD</h2>
+<p>Precisamos preparar o disco para ser usado como OSD usando os seguintes comandos:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>sudo<span class="w"> </span>ceph-volume<span class="w"> </span>lvm<span class="w"> </span>prepare<span class="w"> </span>--data<span class="w"> </span>/dev/sdb
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>sudo<span class="w"> </span>ceph-volume<span class="w"> </span>lvm<span class="w"> </span>activate<span class="w"> </span><span class="o">{</span>osd-number<span class="o">}</span><span class="w"> </span><span class="o">{</span>osd-uuid<span class="o">}</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>ceph-osd@<span class="o">{</span>osd-number<span class="o">}</span>
+</code></pre></div>
+<h1 id="usando-um-block-device-no-cluster">Usando um Block Device no cluster</h1>
+<p>Um node de "block device" refere-se a um nó (ou servidor) no cluster que possui dispositivos de bloco anexados que são usados para armazenar dados. Esses dispositivos de bloco podem ser HDs ou SSDs que estão disponíveis no node e que são usados pelos demais componentes do Ceph, como OSDs, para armazenar os dados de maneira distribuída e replicada.</p>
+<h2 id="1-criando-um-node-ceph-client">1. Criando um node "Ceph-Client"</h2>
+<p>Crie e configure uma VM nova para servir como um novo node “client” ao cluster. Depois, instale os pacotes necessários nessa VM.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>apt<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span>ceph-common<span class="w"> </span>xfsprogs
+</code></pre></div>
+<h2 id="2-enviando-os-arquivos-de-um-node-pra-outro">2. Enviando os arquivos de um node pra outro</h2>
+<p>No seu controller, copie os arquivos de configuração e mande para o node “client”</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>sudo<span class="w"> </span>scp<span class="w"> </span>/etc/ceph/ceph.conf<span class="w"> </span><span class="o">{</span>user<span class="o">}</span>@<span class="o">{</span>server<span class="o">}</span>:/etc/ceph/
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>sudo<span class="w"> </span>scp<span class="w"> </span>/etc/ceph/ceph.client.admin.keyring<span class="w"> </span><span class="o">{</span>user<span class="o">}</span>@<span class="o">{</span>server<span class="o">}</span>:/etc/ceph/
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>sudo<span class="w"> </span>scp<span class="w"> </span>/var/lib/ceph/bootstrap-osd/ceph.keyring<span class="w"> </span><span class="o">{</span>user<span class="o">}</span>@<span class="o">{</span>server<span class="o">}</span>:/var/lib/ceph/bootstrap-osd/
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>sudo<span class="w"> </span>scp<span class="w"> </span>/etc/ceph/monmap<span class="w"> </span><span class="o">{</span>user<span class="o">}</span>@<span class="o">{</span>server<span class="o">}</span>:/etc/ceph/
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>sudo<span class="w"> </span>scp<span class="w"> </span>/etc/ceph/ceph.mon.keyring<span class="w"> </span><span class="o">{</span>user<span class="o">}</span>@<span class="o">{</span>server<span class="o">}</span>:/etc/ceph/ceph.mon.keyring
+</code></pre></div>
+<h2 id="3-criando-uma-pool">3. Criando uma pool</h2>
+<p>No seu client, mude o dono da key do ceph e crie uma pool rbd (rados block device). No Ceph, uma "pool" é uma partição lógica para armazenar dados. A pool 'rbd' é usada para armazenar imagens de dispositivos de bloco.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>chown<span class="w"> </span>ceph.<span class="w"> </span>/etc/ceph/ceph.*
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>ceph<span class="w"> </span>osd<span class="w"> </span>pool<span class="w"> </span>create<span class="w"> </span>rbd<span class="w"> </span><span class="m">64</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>ceph<span class="w"> </span>mgr<span class="w"> </span>module<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>pg_autoscaler
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>ceph<span class="w"> </span>osd<span class="w"> </span>pool<span class="w"> </span><span class="nb">set</span><span class="w"> </span>rbd<span class="w"> </span>pg_autoscale_mode<span class="w"> </span>on
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>rbd<span class="w"> </span>pool<span class="w"> </span>init<span class="w"> </span>rbd
+</code></pre></div>
+<h2 id="4-crie-um-block-device">4. Crie um block device</h2>
+<p>O RBD fornece uma interface de dispositivo de bloco em disco. Quando você cria uma imagem RBD, ela é dividida em múltiplos objetos no pool. Isso significa que o RBD é mapeado para um ou mais objetos em um cluster de armazenamento Ceph, e os dados do dispositivo de bloco são distribuídos por todo o cluster. Isso facilita o redimensionamento, a migração e a replicação dos dados.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>rbd<span class="w"> </span>create<span class="w"> </span>--size<span class="w"> </span>10G<span class="w"> </span>--pool<span class="w"> </span>rbd<span class="w"> </span>rbd01
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>rbd<span class="w"> </span>ls<span class="w"> </span>-l
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>rbd<span class="w"> </span>map<span class="w"> </span>rbd01
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>rbd<span class="w"> </span>showmapped
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>mkfs.xfs<span class="w"> </span>/dev/rbd0
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>mount<span class="w"> </span>/dev/rbd0<span class="w"> </span>/mnt
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>df<span class="w"> </span>-hT
+</code></pre></div>
+<blockquote>
+<p><strong>Atenção:</strong>
+Para deletar o block device criado, siga esses passos:
+`bash</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code>rbd unmap /dev/rbd/rbd/rbd01
+rbd rm rbd01 -p rbd
+ceph osd pool delete rbd rbd --yes-i-really-really-mean-it
+`
+</code></pre></div>
+<h1 id="usando-um-file-system-no-cluster">Usando um File System no cluster</h1>
+<p>O Ceph File System (CephFS) é um sistema de arquivos distribuído compatível com POSIX que usa um Ceph Storage Cluster para armazenar seus dados. O CephFS é um serviço robusto e totalmente equipado com recursos como snapshots, quotas e capacidades de espelhamento multi-cluster. Os arquivos do CephFS são distribuídos em objetos armazenados pelo Ceph, proporcionando alta escala e desempenho. Os sistemas Linux podem montar sistemas de arquivos CephFS nativamente, via um cliente baseado em FUSE, ou via um gateway NFSv4.</p>
+<h2 id="1-no-node-client-instale-o-ceph-fuse">1. No node “client”, instale o “ceph-fuse”</h2>
+<p>O "ceph-fuse" permite montar o CephFS em um node client para que ele possa acessar e interagir com o sistema de arquivos distribuído do cluster Ceph.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>ssh<span class="w"> </span>ceph-client<span class="w"> </span><span class="s2">&quot;apt -y install ceph-fuse&quot;</span>
+</code></pre></div>
+<h2 id="2-configure-o-mds-metadata-server-em-um-node-controller">2. Configure o MDS (MetaData Server) em um node controller</h2>
+<p>O Metadata Server (MDS) é responsável por gerenciar os metadados do CephFS, como informações de diretórios, permissões e atributos.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>/var/lib/ceph/mds/ceph-<span class="o">{</span>node1-id<span class="o">}</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>ceph-authtool<span class="w"> </span>--create-keyring<span class="w"> </span>/var/lib/ceph/mds/ceph-node01/keyring<span class="w"> </span>--gen-key<span class="w"> </span>-n<span class="w"> </span>mds.<span class="o">{</span>node1-id<span class="o">}</span>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>chown<span class="w"> </span>-R<span class="w"> </span>ceph.<span class="w"> </span>/var/lib/ceph/mds/ceph-<span class="o">{</span>node1-id<span class="o">}</span>
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>ceph<span class="w"> </span>auth<span class="w"> </span>add<span class="w"> </span>mds.<span class="o">{</span>node1-id<span class="o">}</span><span class="w"> </span>osd<span class="w"> </span><span class="s2">&quot;allow rwx&quot;</span><span class="w"> </span>mds<span class="w"> </span><span class="s2">&quot;allow&quot;</span><span class="w"> </span>mon<span class="w"> </span><span class="s2">&quot;allow profile mds&quot;</span><span class="w"> </span>-i<span class="w"> </span>/var/lib/ceph/mds/ceph-<span class="o">{</span>node1-id<span class="o">}</span>/keyring
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>ceph-mds@<span class="o">{</span>node1-id<span class="o">}</span>
+</code></pre></div>
+<h2 id="3-crie-2-rados-pools-para-data-e-metadata-no-node-com-mds">3. Crie 2 RADOS pools para Data e MetaData no node com MDS</h2>
+<p>Para o CephFS, você precisa criar duas pools, uma para armazenar os dados do sistema de arquivos (cephfs_data) e outra para armazenar os metadados (cephfs_metadata).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>ceph<span class="w"> </span>osd<span class="w"> </span>pool<span class="w"> </span>create<span class="w"> </span>cephfs_data<span class="w"> </span><span class="m">16</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>ceph<span class="w"> </span>osd<span class="w"> </span>pool<span class="w"> </span>create<span class="w"> </span>cephfs_metadata<span class="w"> </span><span class="m">8</span>
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>ceph<span class="w"> </span>fs<span class="w"> </span>new<span class="w"> </span>cephfs<span class="w"> </span>cephfs_metadata<span class="w"> </span>cephfs_data
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>ceph<span class="w"> </span>fs<span class="w"> </span>ls
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>ceph<span class="w"> </span>mds<span class="w"> </span>stat
+<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>ceph<span class="w"> </span>fs<span class="w"> </span>status<span class="w"> </span>cephfs
+</code></pre></div>
+<h2 id="4-monte-uma-particao-cephfs-no-node-client">4. Monte uma partição CephFS no node Client</h2>
+<p>O comando ceph fs new cria um novo CephFS usando as duas pools criadas anteriormente para os metadados e os dados.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>ceph-authtool<span class="w"> </span>-p<span class="w"> </span>/etc/ceph/ceph.client.admin.keyring<span class="w"> </span>&gt;<span class="w"> </span>admin.key
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>admin.key
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>mount<span class="w"> </span>-t<span class="w"> </span>ceph<span class="w"> </span>node01.srv.world:6789:/<span class="w"> </span>/mnt<span class="w"> </span>-o<span class="w"> </span><span class="nv">name</span><span class="o">=</span>admin,secretfile<span class="o">=</span>admin.key
+<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>df<span class="w"> </span>-hT
+</code></pre></div>
+<h1 id="configurando-o-ceph-object-gateway">Configurando o Ceph Object Gateway</h1>
+<p>o Ceph Object Gateway é um serviço que fornece interfaces compatíveis com a API S3 e API Swift, permitindo que aplicativos e clientes acessem objetos armazenados no cluster Ceph como se fossem serviços de armazenamento de objetos independentes.</p>
+<h2 id="1-em-um-node-especifico-para-object-gateway-instale-o-radosgw">1. Em um node especifico para Object Gateway, instale o radosgw</h2>
+<p>O radosgw fornece uma interface de armazenamento de objetos compatível com a API S3 (Amazon Simple Storage Service) e a API Swift (OpenStack Object Storage).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>apt<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span>radosgw
+</code></pre></div>
+<h2 id="2-no-node-controller1-configure-o-cephconf">2. No node “controller1”, configure o ceph.conf</h2>
+<p>Vamos definir o host do node onde o Object Gateway está sendo instalado e selecionar a porta "8080" para civetweb, que é uma opção de frontend web para o Object Gateway.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="c1"># adicione ao final</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="c1"># client.rgw.(NomeDoNode)</span>
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="o">[</span>client.rgw.NomeDoNode<span class="o">]</span>
+<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="c1"># IP do Node</span>
+<a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="nv">host</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span>.0.0.31
+<a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a><span class="c1"># selecione a porta</span>
+<a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a>rgw<span class="w"> </span><span class="nv">frontends</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;civetweb port=8080&quot;</span>
+</code></pre></div>
+<h2 id="3-transfira-os-arquivos-de-configuracao">3. Transfira os arquivos de configuração</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>scp<span class="w"> </span>/etc/ceph/ceph.conf<span class="w"> </span><span class="o">{</span>user<span class="o">}</span>@<span class="o">{</span>server<span class="o">}</span>:/etc/ceph/ceph.conf
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>scp<span class="w"> </span>/etc/ceph/ceph.client.admin.keyring<span class="w"> </span><span class="o">{</span>user<span class="o">}</span>@<span class="o">{</span>server<span class="o">}</span>:/etc/ceph/
+</code></pre></div>
+<h2 id="4-configure-o-radosgw">4. Configure o RADOSGW</h2>
+<p>Criando uma chave de autenticação específica para o client do Object Gateway e configurando os diretórios e permissões necessários.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>ssh<span class="w"> </span><span class="o">{</span>user<span class="o">}</span>@<span class="o">{</span>server-do-RADOS-GW<span class="o">}</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="s2">&quot;mkdir -p /var/lib/ceph/radosgw/ceph-rgw.</span><span class="nv">$NomeDoNode</span><span class="s2">; \</span>
+<a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a><span class="s2">ceph auth get-or-create client.rgw.</span><span class="nv">$NomeDoNode</span><span class="s2"> osd &#39;allow rwx&#39; mon &#39;allow rw&#39; -o /var/lib/ceph/radosgw/ceph-rgw.</span><span class="nv">$NomeDoNode</span><span class="s2">/keyring; \</span>
+<a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a><span class="s2">chown ceph. /etc/ceph/ceph.*; \</span>
+<a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a><span class="s2">chown -R ceph. /var/lib/ceph/radosgw; \</span>
+<a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a><span class="s2">systemctl enable --now ceph-radosgw@rgw.</span><span class="nv">$NomeDoNode</span><span class="s2">&quot;</span>
+</code></pre></div>
+<h2 id="5-reinicie-os-nodes-controller1-e-o-node-de-radosgw">5. Reinicie os nodes “controller1” e o node de radosgw</h2>
+<p>É recomendado reiniciar os nodes "controller1" e o node onde o Object Gateway foi configurado para garantir que todas as alterações de configuração entrem em vigor.</p>
+<h2 id="6-verifique-o-status-do-radosgw">6. Verifique o status do RADOSGW</h2>
+<p>Acesse a interface através de uma chamada HTTP usando o "curl".</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>curl<span class="w"> </span>IPdoNode:8080
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a><span class="c1"># Saída esperada:</span>
+<a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>&lt;?xml<span class="w"> </span><span class="nv">version</span><span class="o">=</span><span class="s2">&quot;1.0&quot;</span><span class="w"> </span><span class="nv">encoding</span><span class="o">=</span><span class="s2">&quot;UTF-8&quot;</span>?&gt;&lt;ListAllMyBucketsResult<span class="w"> </span><span class="nv">xmlns</span><span class="o">=</span><span class="s2">&quot;http://s3.amazonaws.com/doc/2006-03-01/&quot;</span>&gt;&lt;Owner&gt;&lt;ID&gt;anonymous&lt;/ID&gt;&lt;DisplayName&gt;&lt;/DisplayName&gt;&lt;/Owner&gt;&lt;Buckets&gt;&lt;/Buckets&gt;&lt;/ListAllMyBucketsResult&gt;
+</code></pre></div>
+<h2 id="7-no-node-de-object-gateway-crie-um-usuario">7. No node de object gateway, crie um usuário</h2>
+<p>Crie um usuário específico para o Object Gateway. Isso permitirá que você acesse o Object Gateway e armazene objetos usando a API S3.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="c1"># por exemplo, crie um usuário [tiex]</span>
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>radosgw-admin<span class="w"> </span>user<span class="w"> </span>create<span class="w"> </span>--uid<span class="o">=</span>tiex<span class="w"> </span>--display-name<span class="o">=</span><span class="s2">&quot;Tiex&quot;</span>
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>
+<a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="c1"># lista de usuários</span>
+<a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a>radosgw-admin<span class="w"> </span>user<span class="w"> </span>list
+<a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a>
+<a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a><span class="c1"># informação de usuário</span>
+<a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a>radosgw-admin<span class="w"> </span>user<span class="w"> </span>info<span class="w"> </span>--uid<span class="o">=</span>tiex
+</code></pre></div>
+<h2 id="8-use-o-script-de-teste-em-python-para-verificar-o-acesso-a-interface-s3">8. Use o script de teste em Python para verificar o acesso à interface S3</h2>
+<p>O script cria um bucket, lista os buckets existentes, remove o bucket criado e verifica o acesso bem-sucedido à interface S3.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="c1"># Instale o boto3</span>
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>apt<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span>python3-boto3
+<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>
+<a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="c1"># crie o arquivo do script</span>
+<a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a>nano<span class="w"> </span>s3_teste.py
+<a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a>
+<a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a><span class="c1"># copie e cole no script</span>
+<a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a>import<span class="w"> </span>sys
+<a id="__codelineno-30-9" name="__codelineno-30-9" href="#__codelineno-30-9"></a>import<span class="w"> </span>boto3
+<a id="__codelineno-30-10" name="__codelineno-30-10" href="#__codelineno-30-10"></a>from<span class="w"> </span>botocore.config<span class="w"> </span>import<span class="w"> </span>Config
+<a id="__codelineno-30-11" name="__codelineno-30-11" href="#__codelineno-30-11"></a><span class="c1"># user&#39;s access-key and secret-key you added on [2] section</span>
+<a id="__codelineno-30-12" name="__codelineno-30-12" href="#__codelineno-30-12"></a><span class="nv">session</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>boto3.session.Session<span class="o">(</span>
+<a id="__codelineno-30-13" name="__codelineno-30-13" href="#__codelineno-30-13"></a><span class="w">    </span><span class="nv">aws_access_key_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;{access_key_idDoUsuario}&#39;</span>,
+<a id="__codelineno-30-14" name="__codelineno-30-14" href="#__codelineno-30-14"></a><span class="w">    </span><span class="nv">aws_secret_access_key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;{secret_access_keyDoUsuario}&#39;</span>
+<a id="__codelineno-30-15" name="__codelineno-30-15" href="#__codelineno-30-15"></a><span class="o">)</span>
+<a id="__codelineno-30-16" name="__codelineno-30-16" href="#__codelineno-30-16"></a><span class="c1"># Object Gateway URL</span>
+<a id="__codelineno-30-17" name="__codelineno-30-17" href="#__codelineno-30-17"></a><span class="nv">s3client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>session.client<span class="o">(</span>
+<a id="__codelineno-30-18" name="__codelineno-30-18" href="#__codelineno-30-18"></a><span class="w">    </span><span class="s1">&#39;s3&#39;</span>,
+<a id="__codelineno-30-19" name="__codelineno-30-19" href="#__codelineno-30-19"></a><span class="w">    </span><span class="nv">endpoint_url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;http://10.0.0.31:8080&#39;</span>,
+<a id="__codelineno-30-20" name="__codelineno-30-20" href="#__codelineno-30-20"></a><span class="w">    </span><span class="nv">config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>Config<span class="o">()</span>
+<a id="__codelineno-30-21" name="__codelineno-30-21" href="#__codelineno-30-21"></a><span class="o">)</span>
+<a id="__codelineno-30-22" name="__codelineno-30-22" href="#__codelineno-30-22"></a><span class="c1"># create [my-new-bucket]</span>
+<a id="__codelineno-30-23" name="__codelineno-30-23" href="#__codelineno-30-23"></a><span class="nv">bucket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>s3client.create_bucket<span class="o">(</span><span class="nv">Bucket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;my-new-bucket&#39;</span><span class="o">)</span>
+<a id="__codelineno-30-24" name="__codelineno-30-24" href="#__codelineno-30-24"></a><span class="c1"># list Buckets</span>
+<a id="__codelineno-30-25" name="__codelineno-30-25" href="#__codelineno-30-25"></a>print<span class="o">(</span>s3client.list_buckets<span class="o">())</span>
+<a id="__codelineno-30-26" name="__codelineno-30-26" href="#__codelineno-30-26"></a><span class="c1"># remove [my-new-bucket]</span>
+<a id="__codelineno-30-27" name="__codelineno-30-27" href="#__codelineno-30-27"></a>s3client.delete_bucket<span class="o">(</span><span class="nv">Bucket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;my-new-bucket&#39;</span><span class="o">)</span>
+<a id="__codelineno-30-28" name="__codelineno-30-28" href="#__codelineno-30-28"></a>
+<a id="__codelineno-30-29" name="__codelineno-30-29" href="#__codelineno-30-29"></a><span class="c1"># execute o script</span>
+<a id="__codelineno-30-30" name="__codelineno-30-30" href="#__codelineno-30-30"></a>python3<span class="w"> </span>s3_teste.py
+</code></pre></div>
+<h1 id="instale-o-nfs-ganesha">Instale o NFS-Ganesha</h1>
+<p>O NFS-Ganesha oferece a capacidade de compartilhar o CephFS com outros nodes na rede usando o protocolo NFS, permitindo que o CephFS seja acessado e usado como um sistema de arquivos compartilhado.</p>
+<h2 id="1-instale-e-configure-o-nfs-ganesha-no-node-com-cephfs">1. Instale e configure o NFS-Ganesha no node com CephFS</h2>
+<p>O NFS-Ganesha é um servidor NFS de usuário no espaço do usuário que suporta vários sistemas de arquivos back-end, incluindo o CephFS. Isso permitirá que você monte o CephFS usando o protocolo NFS.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>apt<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span>nfs-ganesha-ceph
+<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>
+<a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a>mv<span class="w"> </span>/etc/ganesha/ganesha.conf<span class="w"> </span>/etc/ganesha/ganesha.conf.org
+<a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a>
+<a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a><span class="c1"># Configurando o NFS-Ganesha para montar o CephFS usando o protocolo NFSv4.</span>
+<a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a>nano<span class="w"> </span>/etc/ganesha/ganesha.conf
+<a id="__codelineno-31-7" name="__codelineno-31-7" href="#__codelineno-31-7"></a>
+<a id="__codelineno-31-8" name="__codelineno-31-8" href="#__codelineno-31-8"></a><span class="c1"># copie e cole</span>
+<a id="__codelineno-31-9" name="__codelineno-31-9" href="#__codelineno-31-9"></a>NFS_CORE_PARAM<span class="w"> </span><span class="o">{</span>
+<a id="__codelineno-31-10" name="__codelineno-31-10" href="#__codelineno-31-10"></a><span class="w">    </span><span class="c1"># desativa NLM</span>
+<a id="__codelineno-31-11" name="__codelineno-31-11" href="#__codelineno-31-11"></a><span class="w">    </span><span class="nv">Enable_NLM</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>false<span class="p">;</span>
+<a id="__codelineno-31-12" name="__codelineno-31-12" href="#__codelineno-31-12"></a><span class="w">    </span><span class="c1"># desativa RQUOTA (não suportado no CephFS)</span>
+<a id="__codelineno-31-13" name="__codelineno-31-13" href="#__codelineno-31-13"></a><span class="w">    </span><span class="nv">Enable_RQUOTA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>false<span class="p">;</span>
+<a id="__codelineno-31-14" name="__codelineno-31-14" href="#__codelineno-31-14"></a><span class="w">    </span><span class="c1"># protocolo NFS</span>
+<a id="__codelineno-31-15" name="__codelineno-31-15" href="#__codelineno-31-15"></a><span class="w">    </span><span class="nv">Protocols</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">4</span><span class="p">;</span>
+<a id="__codelineno-31-16" name="__codelineno-31-16" href="#__codelineno-31-16"></a><span class="o">}</span>
+<a id="__codelineno-31-17" name="__codelineno-31-17" href="#__codelineno-31-17"></a>EXPORT_DEFAULTS<span class="w"> </span><span class="o">{</span>
+<a id="__codelineno-31-18" name="__codelineno-31-18" href="#__codelineno-31-18"></a><span class="w">    </span><span class="c1"># acesso padrao</span>
+<a id="__codelineno-31-19" name="__codelineno-31-19" href="#__codelineno-31-19"></a><span class="w">    </span><span class="nv">Access_Type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>RW<span class="p">;</span>
+<a id="__codelineno-31-20" name="__codelineno-31-20" href="#__codelineno-31-20"></a><span class="o">}</span>
+<a id="__codelineno-31-21" name="__codelineno-31-21" href="#__codelineno-31-21"></a>EXPORT<span class="w"> </span><span class="o">{</span>
+<a id="__codelineno-31-22" name="__codelineno-31-22" href="#__codelineno-31-22"></a><span class="w">    </span><span class="c1"># ID unico</span>
+<a id="__codelineno-31-23" name="__codelineno-31-23" href="#__codelineno-31-23"></a><span class="w">    </span><span class="nv">Export_Id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">101</span><span class="p">;</span>
+<a id="__codelineno-31-24" name="__codelineno-31-24" href="#__codelineno-31-24"></a><span class="w">    </span><span class="c1"># monta o caminho para CephFS</span>
+<a id="__codelineno-31-25" name="__codelineno-31-25" href="#__codelineno-31-25"></a><span class="w">    </span><span class="nv">Path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;/&quot;</span><span class="p">;</span>
+<a id="__codelineno-31-26" name="__codelineno-31-26" href="#__codelineno-31-26"></a><span class="w">    </span>FSAL<span class="w"> </span><span class="o">{</span>
+<a id="__codelineno-31-27" name="__codelineno-31-27" href="#__codelineno-31-27"></a><span class="w">        </span><span class="nv">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>CEPH<span class="p">;</span>
+<a id="__codelineno-31-28" name="__codelineno-31-28" href="#__codelineno-31-28"></a><span class="w">        </span><span class="c1"># hostname ou IP do Node</span>
+<a id="__codelineno-31-29" name="__codelineno-31-29" href="#__codelineno-31-29"></a><span class="w">        </span><span class="nv">hostname</span><span class="o">=</span><span class="s2">&quot;10.0.0.51&quot;</span><span class="p">;</span>
+<a id="__codelineno-31-30" name="__codelineno-31-30" href="#__codelineno-31-30"></a><span class="w">    </span><span class="o">}</span>
+<a id="__codelineno-31-31" name="__codelineno-31-31" href="#__codelineno-31-31"></a><span class="w">    </span><span class="c1"># setando root Squash</span>
+<a id="__codelineno-31-32" name="__codelineno-31-32" href="#__codelineno-31-32"></a><span class="w">    </span><span class="nv">Squash</span><span class="o">=</span><span class="s2">&quot;No_root_squash&quot;</span><span class="p">;</span>
+<a id="__codelineno-31-33" name="__codelineno-31-33" href="#__codelineno-31-33"></a><span class="w">    </span><span class="c1"># NFSv4 Pseudo caminho</span>
+<a id="__codelineno-31-34" name="__codelineno-31-34" href="#__codelineno-31-34"></a><span class="w">    </span><span class="nv">Pseudo</span><span class="o">=</span><span class="s2">&quot;/vfs_ceph&quot;</span><span class="p">;</span>
+<a id="__codelineno-31-35" name="__codelineno-31-35" href="#__codelineno-31-35"></a><span class="w">    </span><span class="c1"># permitindo opções de segurança</span>
+<a id="__codelineno-31-36" name="__codelineno-31-36" href="#__codelineno-31-36"></a><span class="w">    </span><span class="nv">SecType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;sys&quot;</span><span class="p">;</span>
+<a id="__codelineno-31-37" name="__codelineno-31-37" href="#__codelineno-31-37"></a><span class="o">}</span>
+<a id="__codelineno-31-38" name="__codelineno-31-38" href="#__codelineno-31-38"></a>LOG<span class="w"> </span><span class="o">{</span>
+<a id="__codelineno-31-39" name="__codelineno-31-39" href="#__codelineno-31-39"></a><span class="w">    </span><span class="c1"># log level padrao</span>
+<a id="__codelineno-31-40" name="__codelineno-31-40" href="#__codelineno-31-40"></a><span class="w">    </span><span class="nv">Default_Log_Level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>WARN<span class="p">;</span>
+<a id="__codelineno-31-41" name="__codelineno-31-41" href="#__codelineno-31-41"></a><span class="o">}</span>
+<a id="__codelineno-31-42" name="__codelineno-31-42" href="#__codelineno-31-42"></a>
+<a id="__codelineno-31-43" name="__codelineno-31-43" href="#__codelineno-31-43"></a>systemctl<span class="w"> </span>restart<span class="w"> </span>nfs-ganesha
+</code></pre></div>
+<h2 id="2-verifique-a-montagem-do-nfs-no-node-client-do-ceph">2. Verifique a montagem do NFS no node “Client” do ceph.</h2>
+<p>Vamos verificar se foi bem-sucedida a montagem do CephFS no node Client usando o protocolo NFSv4.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>apt<span class="w"> </span>-y<span class="w"> </span>install<span class="w"> </span>nfs-common
+<a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>
+<a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a>mount<span class="w"> </span>-t<span class="w"> </span>nfs4<span class="w"> </span>controller1:/vfs_ceph<span class="w"> </span>/mnt
+<a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a>
+<a id="__codelineno-32-5" name="__codelineno-32-5" href="#__codelineno-32-5"></a>df<span class="w"> </span>-hT
+</code></pre></div>
+<h1 id="configurando-iscsi-no-ceph">Configurando ISCSI no ceph</h1>
+<p>O iSCSI (Internet Small Computer System Interface) é um protocolo que permite o uso da infraestrutura de rede TCP/IP para transporte de dados SCSI entre um servidor iSCSI (initiator) e um dispositivo de armazenamento (target). No contexto de Ceph, o iSCSI é usado para fornecer acesso a blocos de armazenamento do Ceph através de uma rede usando o protocolo iSCSI.</p>
+<h2 id="1-crie-uma-pool-para-o-iscsi">1. Crie uma pool para o iscsi</h2>
+<p>Pool no Ceph para armazenar as imagens do iSCSI.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>sudo<span class="w"> </span>ceph<span class="w"> </span>osd<span class="w"> </span>pool<span class="w"> </span>create<span class="w"> </span>iscsi
+<a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>
+<a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a>sudo<span class="w"> </span>rbd<span class="w"> </span>pool<span class="w"> </span>init<span class="w"> </span>iscsi
+</code></pre></div>
+<h2 id="2-altere-o-arquivo-de-configuracao-do-ceph">2. Altere o arquivo de configuração do ceph</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>nano<span class="w"> </span>/etc/ceph/ceph.conf
+<a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>
+<a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a><span class="c1"># copie e cole</span>
+<a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a><span class="o">[</span>global<span class="o">]</span>
+<a id="__codelineno-34-5" name="__codelineno-34-5" href="#__codelineno-34-5"></a><span class="nv">fsid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>9ea8b268-15fb-4f20-a6df-b40ded1eab11
+<a id="__codelineno-34-6" name="__codelineno-34-6" href="#__codelineno-34-6"></a>mon<span class="w"> </span>initial<span class="w"> </span><span class="nv">members</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>controller1,<span class="w"> </span>controller2,<span class="w"> </span>controller3
+<a id="__codelineno-34-7" name="__codelineno-34-7" href="#__codelineno-34-7"></a>mon<span class="w"> </span><span class="nv">host</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span>.0.0.51,<span class="w"> </span><span class="m">10</span>.0.0.52,<span class="w"> </span><span class="m">10</span>.0.0.53
+<a id="__codelineno-34-8" name="__codelineno-34-8" href="#__codelineno-34-8"></a>public<span class="w"> </span><span class="nv">network</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">172</span>.25.12.0/13
+<a id="__codelineno-34-9" name="__codelineno-34-9" href="#__codelineno-34-9"></a>cluster<span class="w"> </span><span class="nv">network</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span>.0.0.0/24
+<a id="__codelineno-34-10" name="__codelineno-34-10" href="#__codelineno-34-10"></a>auth<span class="w"> </span>cluster<span class="w"> </span><span class="nv">required</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>cephx
+<a id="__codelineno-34-11" name="__codelineno-34-11" href="#__codelineno-34-11"></a>auth<span class="w"> </span>service<span class="w"> </span><span class="nv">required</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>cephx
+<a id="__codelineno-34-12" name="__codelineno-34-12" href="#__codelineno-34-12"></a>auth<span class="w"> </span>client<span class="w"> </span><span class="nv">required</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>cephx
+<a id="__codelineno-34-13" name="__codelineno-34-13" href="#__codelineno-34-13"></a>
+<a id="__codelineno-34-14" name="__codelineno-34-14" href="#__codelineno-34-14"></a><span class="o">[</span>osd<span class="o">]</span>
+<a id="__codelineno-34-15" name="__codelineno-34-15" href="#__codelineno-34-15"></a>osd<span class="w"> </span>heartbeat<span class="w"> </span><span class="nv">grace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span>
+<a id="__codelineno-34-16" name="__codelineno-34-16" href="#__codelineno-34-16"></a>osd<span class="w"> </span>heartbeat<span class="w"> </span><span class="nv">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span>
+<a id="__codelineno-34-17" name="__codelineno-34-17" href="#__codelineno-34-17"></a>osd<span class="w"> </span>client<span class="w"> </span>watch<span class="w"> </span><span class="nv">timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">15</span>
+<a id="__codelineno-34-18" name="__codelineno-34-18" href="#__codelineno-34-18"></a>
+<a id="__codelineno-34-19" name="__codelineno-34-19" href="#__codelineno-34-19"></a><span class="c1"># client.rgw.(Node Name)</span>
+<a id="__codelineno-34-20" name="__codelineno-34-20" href="#__codelineno-34-20"></a><span class="o">[</span>client.rgw.ceph-radosgw<span class="o">]</span>
+<a id="__codelineno-34-21" name="__codelineno-34-21" href="#__codelineno-34-21"></a><span class="c1"># IP address of the Node</span>
+<a id="__codelineno-34-22" name="__codelineno-34-22" href="#__codelineno-34-22"></a><span class="nv">host</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span>.0.0.31
+<a id="__codelineno-34-23" name="__codelineno-34-23" href="#__codelineno-34-23"></a><span class="c1"># set listening port</span>
+<a id="__codelineno-34-24" name="__codelineno-34-24" href="#__codelineno-34-24"></a>rgw<span class="w"> </span><span class="nv">frontends</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;civetweb port=8080&quot;</span>
+</code></pre></div>
+<h2 id="3-instale-os-seguintes-pacotes-em-todos-os-nodes-que-terao-o-iscsi">3. Instale os seguintes pacotes em todos os nodes que terão o ISCSI</h2>
+<p>Esses pacotes são necessários para configurar o ISCSI.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>targetcli-fb<span class="w"> </span>ceph-iscsi<span class="w"> </span>python3-rtslib-fb<span class="w"> </span>tcmu-runner
+</code></pre></div>
+<h2 id="4-configure-o-arquivo-de-configuracao-do-iscsi">4. Configure o arquivo de configuração do ISCSI</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>nano<span class="w"> </span>/etc/ceph/iscsi-gateway.cfg
+<a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>
+<a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a><span class="c1"># copie e cole</span>
+<a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a><span class="o">[</span>config<span class="o">]</span>
+<a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a><span class="nv">cluster_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>ceph
+<a id="__codelineno-36-6" name="__codelineno-36-6" href="#__codelineno-36-6"></a><span class="nv">gateway_keyring</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>ceph.client.admin.keyring
+<a id="__codelineno-36-7" name="__codelineno-36-7" href="#__codelineno-36-7"></a><span class="nv">pool</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>iscsi
+<a id="__codelineno-36-8" name="__codelineno-36-8" href="#__codelineno-36-8"></a>
+<a id="__codelineno-36-9" name="__codelineno-36-9" href="#__codelineno-36-9"></a><span class="nv">api_secure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+<a id="__codelineno-36-10" name="__codelineno-36-10" href="#__codelineno-36-10"></a>
+<a id="__codelineno-36-11" name="__codelineno-36-11" href="#__codelineno-36-11"></a><span class="c1">#api_user = admin</span>
+<a id="__codelineno-36-12" name="__codelineno-36-12" href="#__codelineno-36-12"></a><span class="c1">#api_password = admin</span>
+<a id="__codelineno-36-13" name="__codelineno-36-13" href="#__codelineno-36-13"></a><span class="c1">#api_port = 5001</span>
+<a id="__codelineno-36-14" name="__codelineno-36-14" href="#__codelineno-36-14"></a><span class="nv">trusted_ip_list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span>.0.0.51,10.0.0.52,10.0.0.53,10.0.0.31,10.0.0.30,10.0.0.61,10.0.0.62,10.0.0.63,10.0.0.64,10.0.0.65,10.0.0.66,10.0.0.67,10.0.0.68,10.0.0.69
+</code></pre></div>
+<h2 id="5-reinicie-os-servicos-do-debian-e-habilite-o-servico-do-gateway-para-iscsi">5. Reinicie os serviços do debian e habilite o serviço do gateway para iscsi</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>systemctl<span class="w"> </span>daemon-reload
+<a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>
+<a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>rbd-target-gw
+<a id="__codelineno-37-4" name="__codelineno-37-4" href="#__codelineno-37-4"></a>
+<a id="__codelineno-37-5" name="__codelineno-37-5" href="#__codelineno-37-5"></a><span class="c1"># lista a &quot;blacklist&quot;</span>
+<a id="__codelineno-37-6" name="__codelineno-37-6" href="#__codelineno-37-6"></a>ceph<span class="w"> </span>osd<span class="w"> </span>blacklist<span class="w"> </span>ls
+<a id="__codelineno-37-7" name="__codelineno-37-7" href="#__codelineno-37-7"></a>
+<a id="__codelineno-37-8" name="__codelineno-37-8" href="#__codelineno-37-8"></a><span class="c1"># remove tudo da &quot;blacklist&quot;</span>
+<a id="__codelineno-37-9" name="__codelineno-37-9" href="#__codelineno-37-9"></a>ceph<span class="w"> </span>osd<span class="w"> </span>blacklist<span class="w"> </span>clear
+<a id="__codelineno-37-10" name="__codelineno-37-10" href="#__codelineno-37-10"></a>
+<a id="__codelineno-37-11" name="__codelineno-37-11" href="#__codelineno-37-11"></a>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>rbd-target-api
+<a id="__codelineno-37-12" name="__codelineno-37-12" href="#__codelineno-37-12"></a>systemctl<span class="w"> </span>start<span class="w"> </span>rbd-target-api
+</code></pre></div>
+<h2 id="6-adicionando-os-gateways-ao-cluster">6. Adicionando os gateways ao cluster</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>sudo<span class="w"> </span>ceph<span class="w"> </span>dashboard<span class="w"> </span>set-iscsi-api-ssl-verification<span class="w"> </span><span class="nb">false</span>
+<a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a>
+<a id="__codelineno-38-3" name="__codelineno-38-3" href="#__codelineno-38-3"></a><span class="c1"># lista os iscsi gateways existentes no cluster</span>
+<a id="__codelineno-38-4" name="__codelineno-38-4" href="#__codelineno-38-4"></a>sudo<span class="w"> </span>ceph<span class="w"> </span>dashboard<span class="w"> </span>iscsi-gateway-list
+<a id="__codelineno-38-5" name="__codelineno-38-5" href="#__codelineno-38-5"></a>
+<a id="__codelineno-38-6" name="__codelineno-38-6" href="#__codelineno-38-6"></a><span class="c1"># crie um arquivo para cada iscsi gateway</span>
+<a id="__codelineno-38-7" name="__codelineno-38-7" href="#__codelineno-38-7"></a>micro<span class="w"> </span>gw1
+<a id="__codelineno-38-8" name="__codelineno-38-8" href="#__codelineno-38-8"></a>micro<span class="w"> </span>gw2
+<a id="__codelineno-38-9" name="__codelineno-38-9" href="#__codelineno-38-9"></a>micro<span class="w"> </span>gw3
+<a id="__codelineno-38-10" name="__codelineno-38-10" href="#__codelineno-38-10"></a>
+<a id="__codelineno-38-11" name="__codelineno-38-11" href="#__codelineno-38-11"></a><span class="c1"># copie e cole nos arquivos criados</span>
+<a id="__codelineno-38-12" name="__codelineno-38-12" href="#__codelineno-38-12"></a>http://admin:admin@IPdoNode:5000
+<a id="__codelineno-38-13" name="__codelineno-38-13" href="#__codelineno-38-13"></a>
+<a id="__codelineno-38-14" name="__codelineno-38-14" href="#__codelineno-38-14"></a><span class="c1"># adicione os gateways ao dashboard</span>
+<a id="__codelineno-38-15" name="__codelineno-38-15" href="#__codelineno-38-15"></a>sudo<span class="w"> </span>ceph<span class="w"> </span>dashboard<span class="w"> </span>iscsi-gateway-add<span class="w"> </span>-i<span class="w"> </span>gw1
+<a id="__codelineno-38-16" name="__codelineno-38-16" href="#__codelineno-38-16"></a>sudo<span class="w"> </span>ceph<span class="w"> </span>dashboard<span class="w"> </span>iscsi-gateway-add<span class="w"> </span>-i<span class="w"> </span>gw2
+<a id="__codelineno-38-17" name="__codelineno-38-17" href="#__codelineno-38-17"></a>sudo<span class="w"> </span>ceph<span class="w"> </span>dashboard<span class="w"> </span>iscsi-gateway-add<span class="w"> </span>-i<span class="w"> </span>gw3
+</code></pre></div>
+<hr />
+<h1 id="licenca">Licença</h1>
+<blockquote>
+<p><strong>Desenvolvido pela equipe Tiex</strong></p>
+<p><strong>Autores:</strong> Eduardo Vasconcelos</p>
+<p><strong>Data de criação:</strong> 20/06/2023</p>
+</blockquote>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Voltar ao topo
+          </button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2023 <a href="https://github.com/EduardoVasconceloss"  target="_blank" rel="noopener">Eduardo Vasconcelos, TIEX Workspace</a>
+
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/EduardoVasconceloss" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.linkedin.com/in/eduardo-lbvasconcelos/" target="_blank" rel="noopener" title="www.linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "navigation.top", "search.suggest", "search.highlight", "content.tabs.link", "content.code.annotation", "content.code.copy"], "search": "assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "Mais 1 nesta p\u00e1gina", "search.result.more.other": "Mais # nesta p\u00e1gina", "search.result.none": "Nenhum resultado encontrado", "search.result.one": "1 resultado encontrado", "search.result.other": "# resultados encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.220ee61c.min.js"></script>
+      
+    
+  </body>
+</html>
